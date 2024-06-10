@@ -18,7 +18,9 @@ export default async function CategoriesList() {
         );
       })}
 
-      <AddCategoryButton />
+      <div className="p-2">
+        <AddCategoryButton />
+      </div>
     </section>
   );
 }
