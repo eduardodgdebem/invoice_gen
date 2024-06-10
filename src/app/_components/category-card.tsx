@@ -26,8 +26,7 @@ async function DescriptionItemsByCategoryID({
     <div className="w-full max-w-xs">
       <form action="">
         <ul>
-          {allIDI &&
-            allIDI.map((DI) => {
+          {allIDI?.map((DI) => {
               return (
                 <li key={DI.id} className="flex gap-1 pb-1">
                   <input type="checkbox" name="" id={DI.id.toString()} />

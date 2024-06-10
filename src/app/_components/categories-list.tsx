@@ -7,11 +7,11 @@ export default async function CategoriesList() {
 
   return (
     <section>
-      {allCategories.map((categoty) => {
+      {allCategories.map((category) => {
         return (
-          <Link href={`/invoiceGen/${categoty.id}`}>
+          <Link href={`/invoiceGen/${category.id}`} key={category.id}>
             <h3 className="p-2 text-2xl font-bold capitalize">
-              {categoty.name}
+              {category.name}
             </h3>
             <div className="h-[2px] w-full rounded-full bg-black/20" />
           </Link>

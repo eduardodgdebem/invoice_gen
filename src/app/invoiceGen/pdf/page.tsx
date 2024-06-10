@@ -7,7 +7,7 @@ import { api } from "~/trpc/react";
 import Image from "next/image";
 
 export default function InvoiceGenPdf() {
-  const componentRef = useRef<HTMLDivElement>();
+  const componentRef = useRef<HTMLDivElement>(null);
   const handlePrint = useReactToPrint({
     content: () => {
       if (!componentRef?.current) return null;
@@ -24,7 +24,7 @@ export default function InvoiceGenPdf() {
         Print
       </button>
 
-      <div ref={componentRef as any}>
+      <div ref={componentRef}>
         <InvoicePdf />
       </div>
     </main>
@@ -94,7 +94,7 @@ function InvoicePdf() {
         <header></header>
         {categoriesIds.map((categoryId) => {
           const values = Object.values(
-            itemsSelectedByCategory[categoryId] as any,
+            itemsSelectedByCategory[categoryId]!
           );
           if (!(values.length > 0)) return;
 
@@ -116,7 +116,7 @@ function CategoryCard({
   categoryItems,
 }: {
   categoryId: number;
-  categoryItems: { [itemId: string]: string };
+  categoryItems: Record<string, string>;
 }) {
   const category = api.invoice.getCategoryById.useQuery({ categoryId });
 
@@ -131,7 +131,7 @@ function CategoryCard({
 function ItemsList({
   categoryItems,
 }: {
-  categoryItems: { [itemId: string]: string };
+  categoryItems: Record<string, string>;
 }) {
   const categoryItemsKeys = Object.keys(categoryItems);
   return (

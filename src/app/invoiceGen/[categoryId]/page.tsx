@@ -32,7 +32,7 @@ export default function InvoiceByCategoryID({
         <AddDescriptionItemButton
           categoryId={categoryId}
           onSuccess={() => {
-            allItems.refetch();
+            allItems.refetch().catch(console.error);
           }}
         />
       </section>
@@ -56,7 +56,7 @@ export default function InvoiceByCategoryID({
         <AddDescriptionItemButton
           categoryId={categoryId}
           onSuccess={() => {
-            allItems.refetch();
+            allItems.refetch().catch(console.error);
           }}
         />
       </div>

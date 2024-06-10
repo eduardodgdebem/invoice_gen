@@ -1,6 +1,5 @@
 import Link from "next/link";
 import CategoriesList from "~/app/_components/categories-list";
-import { api } from "~/trpc/server";
 
 export default function InvoiceGenLayout({
   children,

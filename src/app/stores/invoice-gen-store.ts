@@ -1,15 +1,12 @@
 import { create } from "zustand";
 
-export type TItemsSelectedByCategory = {
-  [categoryId: number]: {
-    [itemId: number]: string;
-  };
-};
+export type TItemsSelectedByCategory = Record<number, Record<number, string>>
+
 
 export type invoiceGenState = {
   itemsSelectedByCategory: TItemsSelectedByCategory;
   updateItem: (categoryId: number, itemId: number, description: string) => void;
-  removeItem: (categoryId: number, itemId: number) => void;
+  // removeItem: (categoryId: number, itemId: number) => void;
 };
 
 export const invoiceGenUseStore = create<invoiceGenState>((set) => ({
@@ -24,5 +21,5 @@ export const invoiceGenUseStore = create<invoiceGenState>((set) => ({
         },
       },
     })),
-  removeItem: (categoryId: number, itemId: number) => {},
+  // removeItem: (categoryId: number, itemId: number) => {},
 }));
