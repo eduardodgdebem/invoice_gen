@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { api } from "~/trpc/server";
+import { AddCategoryButton } from "./add-category-button";
 
 export default async function CategoriesList() {
   const allCategories = await api.invoice.getAllCategories();
@@ -16,6 +17,8 @@ export default async function CategoriesList() {
           </Link>
         );
       })}
+
+      <AddCategoryButton />
     </section>
   );
 }

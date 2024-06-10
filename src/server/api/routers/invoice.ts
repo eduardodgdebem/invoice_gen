@@ -17,6 +17,16 @@ export const invoiceRouter = createTRPCRouter({
         },
       });
     }),
+  addCategory: protectedProcedure
+    .input(z.object({ name: z.string().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.invoiceDescriptionCategory.create({
+        data: {
+          name: input.name,
+        },
+      });
+    }),
+
   getInvoiceDescriptionItems: protectedProcedure.query(({ ctx }) => {
     return ctx.db.invoiceDescriptionItems.findMany({
       where: { categoryId: 1 },
