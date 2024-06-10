@@ -1,6 +1,6 @@
 import { InvoiceDescriptionCategory } from "@prisma/client";
 import { api } from "~/trpc/server";
-import { AddCategoryButton } from "./add-description-item-button";
+import { AddDescriptionItemButton } from "./add-description-item-button";
 
 export default async function CategoryCard({
   category,
@@ -38,7 +38,7 @@ async function DescriptionItemsByCategoryID({
         </ul>
       </form>
 
-      <AddCategoryButton categoryId={categoryId}/>
+      <AddDescriptionItemButton categoryId={categoryId}/>
     </div>
   );
 }
