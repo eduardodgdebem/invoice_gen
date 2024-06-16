@@ -28,7 +28,7 @@ function Footer() {
         href="/invoiceGen/pdf"
         className="btn btn-primary"
       >
-        Generate Description
+        Generate Descriptive
       </Link>
     </div>
   );
