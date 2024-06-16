@@ -1,7 +1,7 @@
 "use client";
 
 import type { ServiceItems } from "@prisma/client";
-import type { ChangeEvent } from "react";
+import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import { AddDescriptionItemButton } from "~/app/_components/add-description-item-button";
 import type { TItemsSelectedByCategory } from "~/app/stores/invoice-gen-store";
@@ -70,6 +70,7 @@ function ServiceItem({
   itemsSelectedByCategory: TItemsSelectedByCategory;
 }) {
   const [isAddingNote, setIsAddingNote] = useState(false);
+  const [checked, setChecked] = useState(false);
 
   const updateNote = invoiceGenUseStore((state) => state.updateNote);
 
@@ -77,6 +78,10 @@ function ServiceItem({
     updateNote(categoryId, item.id, input);
     setIsAddingNote(false);
   };
+
+  useEffect(() => {
+    if(!checked && isAddingNote) setIsAddingNote(false)
+  }, [isAddingNote, checked])
 
   return (
     <>
@@ -87,6 +92,8 @@ function ServiceItem({
               item={item}
               categoryId={categoryId}
               itemsSelectedByCategory={itemsSelectedByCategory}
+              checked={checked}
+              setChecked={setChecked}
             />
             {item.description}
           </div>
@@ -97,6 +104,7 @@ function ServiceItem({
               onClick={() => {
                 setIsAddingNote(true);
               }}
+              disabled={!checked}
             >
               Add Note
             </button>
@@ -143,14 +151,17 @@ function CheckButton({
   item,
   itemsSelectedByCategory,
   categoryId,
+  checked,
+  setChecked
 }: {
   item: ServiceItems;
   itemsSelectedByCategory: TItemsSelectedByCategory;
   categoryId: number;
+  checked: boolean;
+  setChecked: Dispatch<SetStateAction<boolean>>
 }) {
   const updateItem = invoiceGenUseStore((state) => state.updateItem);
   const removeItem = invoiceGenUseStore((state) => state.removeItem);
-  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
     const thisSelectedItems = itemsSelectedByCategory[categoryId];
@@ -202,10 +213,10 @@ function AddNoteForm({
         onSubmit(input);
         setInput("");
       }}
-      className="flex gap-2"
+      className="flex gap-2 mt-2"
     >
       <textarea
-        className="textarea textarea-bordered"
+        className="textarea textarea-bordered w-full"
         placeholder={prevNote?.length ? prevNote : "Note"}
         value={input}
         onChange={(e) => setInput(e.target.value)}
