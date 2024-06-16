@@ -26,14 +26,13 @@ export default function CategoriesList({
               <h3 className="p-2 text-2xl font-bold capitalize">
                 {category.name}
               </h3>
-              {/* <hr className="h-[5px] w-full rounded-br-full rounded-tr-full bg-black/20" /> */}
             </Link>
           </div>
         );
       })}
 
       
-        <AddCategoryButton />
+        <AddCategoryButton onSuccess={allCategories.refetch}/>
       
     </section>
   );
