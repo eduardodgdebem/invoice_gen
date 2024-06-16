@@ -43,3 +43,4 @@ yarn-error.log*
 *.tsbuildinfo
 
 start-database.sh
+todo.md

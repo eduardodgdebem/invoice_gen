@@ -3,16 +3,18 @@ import CategoriesList from "~/app/_components/categories-list";
 
 export default function InvoiceGenLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: { categoryId: string };
 }) {
   return (
-    <main className="flex h-[calc(100svh-56px)] flex-col justify-between">
-      <section className="flex">
-        <CategoriesList />
+    <main className="flex flex-col justify-between">
+      <section className="flex justify-between">
+        <CategoriesList currCategoryId={Number(params.categoryId)} />
         {children}
       </section>
-      <section className="flex justify-end">
+      <section className="flex justify-end p-2">
         <Footer />
       </section>
     </main>
@@ -21,10 +23,10 @@ export default function InvoiceGenLayout({
 
 function Footer() {
   return (
-    <div className="p-2">
+    <div>
       <Link
         href="/invoiceGen/pdf"
-        className="rounded-sm bg-black/10 p-2 font-semibold hover:bg-black/20"
+        className="btn btn-primary"
       >
         Generate invoice
       </Link>

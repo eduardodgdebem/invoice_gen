@@ -1,26 +1,40 @@
+"use client";
+
 import Link from "next/link";
-import { api } from "~/trpc/server";
+import { api } from "~/trpc/react";
 import { AddCategoryButton } from "./add-category-button";
 
-export default async function CategoriesList() {
-  const allCategories = await api.invoice.getAllCategories();
+export default function CategoriesList({
+  currCategoryId,
+}: {
+  currCategoryId?: number;
+}) {
+  const allCategories = api.invoice.getAllCategories.useQuery();
 
   return (
-    <section>
-      {allCategories.map((category) => {
+    <section className="min-w-40 flex flex-col gap-2 p-2">
+      {allCategories.data?.map((category) => {
         return (
-          <Link href={`/invoiceGen/${category.id}`} key={category.id}>
-            <h3 className="p-2 text-2xl font-bold capitalize">
-              {category.name}
-            </h3>
-            <div className="h-[2px] w-full rounded-full bg-black/20" />
-          </Link>
+          <div
+            key={category.id}
+            className={
+              "btn btn-outline" +
+              (currCategoryId === category.id ? " btn-active" : "")
+            }
+          >
+            <Link href={`/invoiceGen/${category.id}`}>
+              <h3 className="p-2 text-2xl font-bold capitalize">
+                {category.name}
+              </h3>
+              {/* <hr className="h-[5px] w-full rounded-br-full rounded-tr-full bg-black/20" /> */}
+            </Link>
+          </div>
         );
       })}
 
-      <div className="p-2">
+      
         <AddCategoryButton />
-      </div>
+      
     </section>
   );
 }

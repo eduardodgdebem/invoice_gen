@@ -9,7 +9,7 @@ export default async function Home() {
     <main className="flex justify-center p-4">
       <Link
         href="invoiceGen"
-        className="rounded-sm bg-black/10 p-2 font-semibold hover:bg-black/20"
+        className="btn"
       >
         Generate Invoice
       </Link>

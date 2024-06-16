@@ -1,32 +1,22 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { api } from "~/trpc/react";
-
-export function AddCategoryButton({
-  onSuccess: callback,
-}: {
-  onSuccess?: () => void;
-}) {
-  const router = useRouter();
-  const [name, setName] = useState("");
+export function AddObservation({onAddCB}: {onAddCB?: () => void}) {
+ 
+  const [description, setDescription] = useState("");
   const [isAdding, setIsAdding] = useState(false);
-
-  const createPost = api.invoice.addCategory.useMutation({
-    onSuccess: () => {
-      router.refresh();
-      setName("");
-      setIsAdding(false);
-      if (callback) callback();
-    },
-  });
 
   if (!isAdding)
     return (
-      <button className="btn" onClick={() => setIsAdding(!isAdding)}>
-        Add category
+      <button
+        className="btn btn-sm"
+        onClick={() => {  
+          setIsAdding(!isAdding)
+          if(onAddCB) onAddCB()
+        }}
+      >
+        Add Note
       </button>
     );
 
@@ -34,24 +24,23 @@ export function AddCategoryButton({
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        createPost.mutate({ name });
       }}
-      className="flex flex-col items-end gap-2 text-sm"
+      className="flex gap-2 text-sm flex-col"
     >
       <input
         type="text"
-        placeholder="Category Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+        placeholder="Title"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
         className="input input-bordered w-full"
       />
-      <div className="flex gap-1">
+      <div className="flex gap-2">
         <button
           type="submit"
           className="btn btn-sm"
-          disabled={createPost.isPending}
+        
         >
-          {createPost.isPending ? "Adding..." : "Add"}
+          Add
         </button>
         <button
           type="button"

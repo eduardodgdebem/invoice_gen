@@ -5,6 +5,7 @@ import { GeistSans } from "geist/font/sans";
 import { TRPCReactProvider } from "~/trpc/react";
 import { getServerAuthSession } from "~/server/auth";
 import Link from "next/link";
+import ThemeControler from "./_components/theme-controle";
 
 export const metadata = {
   title: "invoice gen",
@@ -19,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
-      <body className="bg-gray-200">
+      <body className="">
         <Nav />
         <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>
@@ -31,11 +32,8 @@ async function Nav() {
   const session = await getServerAuthSession();
 
   return (
-    <div className="flex justify-between items-center p-2">
-      <Link
-        href="/"
-        className="rounded-sm bg-black/10 p-2 font-semibold hover:bg-black/20"
-      >
+    <div className="flex items-center justify-between p-2">
+      <Link href="/" className="btn btn-primary">
         Home
       </Link>
       <div className="flex items-center justify-end gap-4">
@@ -44,10 +42,11 @@ async function Nav() {
         </p>
         <Link
           href={session ? "/api/auth/signout" : "/api/auth/signin"}
-          className="rounded-sm bg-black/10 p-2 font-semibold hover:bg-black/20"
+          className="btn"
         >
           {session ? "Sign out" : "Sign in"}
         </Link>
+        <ThemeControler />
       </div>
     </div>
   );

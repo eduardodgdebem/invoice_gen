@@ -17,10 +17,7 @@ export default function InvoiceGenPdf() {
 
   return (
     <main className="p-2">
-      <button
-        className="rounded-sm bg-black/10 p-2 font-semibold hover:bg-black/20"
-        onClick={handlePrint}
-      >
+      <button className="btn btn-primary" onClick={handlePrint}>
         Print
       </button>
 
@@ -39,8 +36,13 @@ function InvoicePdf() {
     Number(s),
   );
 
+  const getToday = () => {
+    const today = new Date()
+    return `${today.getMonth()}/${today.getDate()}/${today.getFullYear()}`
+  }
+
   return (
-    <div className="bg-white px-8 py-10">
+    <div className="bg-white px-8 py-10 text-black print:font-roboto">
       <header className="flex justify-between">
         <Image
           src="/abq-logo.png"
@@ -60,9 +62,9 @@ function InvoicePdf() {
         </div>
       </header>
 
-      <section>
-        <h2 className="text-blue-900 text-2xl">INVOICE</h2>
-        <div className="flex justify-between">
+      <section className="mt-8">
+        <h2 className="text-blue-900 text-xl">DESCRIPTION</h2>
+        <div className="flex justify-between text-sm">
           <div>
             <p className="text-gray-400">BILL TO</p>
             <p>Ana Albuquerque</p>
@@ -71,31 +73,17 @@ function InvoicePdf() {
           </div>
           <div>
             <div className="flex justify-between gap-4">
-              <p className="text-gray-400">INVOICE</p>
-              <p>1127</p>
-            </div>
-            <div className="flex justify-between gap-4">
               <p className="text-gray-400">DATE</p>
-              <p>05/21/2024</p>
-            </div>
-            <div className="flex justify-between gap-4">
-              <p className="text-gray-400">TERMS</p>
-              <p>Due on receipt</p>
-            </div>
-            <div className="flex justify-between gap-4">
-              <p className="text-gray-400">DUE DATE</p>
-              <p>05/21/2024</p>
+              <p>{getToday()}</p>
             </div>
           </div>
         </div>
       </section>
 
-      <section>
-        <header></header>
+      <section className="flex flex-col gap-4 mt-4">
+        <hr />
         {categoriesIds.map((categoryId) => {
-          const values = Object.values(
-            itemsSelectedByCategory[categoryId]!
-          );
+          const values = Object.values(itemsSelectedByCategory[categoryId]!);
           if (!(values.length > 0)) return;
 
           return (
@@ -116,13 +104,13 @@ function CategoryCard({
   categoryItems,
 }: {
   categoryId: number;
-  categoryItems: Record<string, string>;
+  categoryItems: Record<string, { description: string; note?: string }>;
 }) {
   const category = api.invoice.getCategoryById.useQuery({ categoryId });
 
   return (
     <section>
-      <h3 className="font-bold capitalize">{category.data?.name}</h3>
+      <h3 className="font-bold capitalize text-2xl">{category.data?.name}:</h3>
       <ItemsList categoryItems={categoryItems} />
     </section>
   );
@@ -131,13 +119,17 @@ function CategoryCard({
 function ItemsList({
   categoryItems,
 }: {
-  categoryItems: Record<string, string>;
+  categoryItems: Record<string, { description: string; note?: string }>;
 }) {
   const categoryItemsKeys = Object.keys(categoryItems);
   return (
     <ul>
       {categoryItemsKeys.map((itemKey) => (
-        <li key={itemKey}>{categoryItems[itemKey]}</li>
+        <li key={itemKey}>
+          - {categoryItems[itemKey]?.description}{" "}
+          {categoryItems[itemKey]?.note?.length &&
+            "-" + categoryItems[itemKey]?.note}
+        </li>
       ))}
     </ul>
   );

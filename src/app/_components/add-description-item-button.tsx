@@ -28,7 +28,7 @@ export function AddDescriptionItemButton({
   if (!isAdding)
     return (
       <button
-        className="rounded-sm bg-black/10 p-2 text-sm font-semibold hover:bg-black/20"
+        className="btn"
         onClick={() => setIsAdding(!isAdding)}
       >
         Add item
@@ -48,21 +48,34 @@ export function AddDescriptionItemButton({
         placeholder="Title"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        className="w-full rounded-sm p-1 text-black"
+        className="input input-bordered w-full"
       />
       <button
         type="submit"
-        className="rounded-sm bg-black/10 p-2 font-semibold transition hover:bg-black/20"
+        className="btn"
         disabled={createPost.isPending}
       >
         {createPost.isPending ? "Adding..." : "Add"}
       </button>
       <button
         type="button"
-        className="flex aspect-square h-5 items-center text-base justify-center rounded-full bg-black/10 p-4 font-semibold transition hover:bg-black/20"
+        className="btn btn-circle"
         onClick={() => setIsAdding(false)}
       >
-        &#10006;
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
       </button>
     </form>
   );
