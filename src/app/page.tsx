@@ -11,7 +11,7 @@ export default async function Home() {
         href="invoiceGen"
         className="btn"
       >
-        Generate Invoice
+        Generate Description
       </Link>
     </main>
   );
