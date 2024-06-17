@@ -18,7 +18,7 @@ export default function CategoriesList({
           <div
             key={category.id}
             className={
-              "btn btn-outline" +
+              "btn btn-outline h-fit" +
               (currCategoryId === category.id ? " btn-active" : "")
             }
           >
