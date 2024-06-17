@@ -9,8 +9,10 @@ export default function CategoryLink({
 }) {
   return (
     <Link href={`/invoiceGen/${category.id}`} key={category.id}>
-      <h3 className="p-2 text-2xl font-bold capitalize">{category.name}</h3>
-      <hr className="h-[5px] w-full rounded-br-full rounded-tr-full bg-black/20" />
+      <a>
+        <h3 className="p-2 text-2xl font-bold capitalize">{category.name}</h3>
+        <hr className="h-[5px] w-full rounded-br-full rounded-tr-full bg-black/20" />
+      </a>
     </Link>
   );
 }
