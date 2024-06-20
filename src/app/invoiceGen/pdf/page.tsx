@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import { invoiceGenUseStore } from "~/app/stores/invoice-gen-store";
 import { api } from "~/trpc/react";
@@ -15,20 +15,64 @@ export default function InvoiceGenPdf() {
     },
   });
 
+  const [client, setClient] = useState({
+    clientName: "",
+    clientAddress: "",
+  });
+
   return (
-    <main className="p-2">
+    <main className="p-2 print:hidden">
+      <section className="my-2 max-w-[400px] rounded-md border-[1px] p-2">
+        <div className="flex  flex-col">
+          <label htmlFor="client-name">Client Name</label>
+          <input
+            type="text"
+            className="input input-sm input-bordered"
+            id="client-name"
+            name="client-name"
+            value={client.clientName}
+            onChange={(e) =>
+              setClient((oldClient) => ({
+                ...oldClient,
+                clientName: e.target.value,
+              }))
+            }
+          />
+        </div>
+        <div className="flex flex-col">
+          <label htmlFor="client-address">Client Address</label>
+          <input
+            type="text"
+            className="input input-sm input-bordered"
+            id="client-address"
+            name="client-adress"
+            value={client.clientAddress}
+            onChange={(e) =>
+              setClient((oldClient) => ({
+                ...oldClient,
+                clientAddress: e.target.value,
+              }))
+            }
+          />
+        </div>
+      </section>
+
       <button className="btn btn-primary" onClick={handlePrint}>
         Print
       </button>
 
       <div ref={componentRef}>
-        <InvoicePdf />
+        <InvoicePdf client={client} />
       </div>
     </main>
   );
 }
 
-function InvoicePdf() {
+function InvoicePdf({
+  client,
+}: {
+  client?: { clientName: string; clientAddress: string };
+}) {
   const itemsSelectedByCategory = invoiceGenUseStore(
     (state) => state.itemsSelectedByCategory,
   );
@@ -37,9 +81,9 @@ function InvoicePdf() {
   );
 
   const getToday = () => {
-    const today = new Date()
-    return `${today.getMonth()}/${today.getDate()}/${today.getFullYear()}`
-  }
+    const today = new Date();
+    return `${today.getMonth()}/${today.getDate()}/${today.getFullYear()}`;
+  };
 
   return (
     <div className="bg-white px-8 py-10 text-black print:font-roboto">
@@ -63,14 +107,18 @@ function InvoicePdf() {
       </header>
 
       <section className="mt-8">
-        <h2 className="text-blue-900 text-xl">DESCRIPTION</h2>
+        <h2 className="text-xl text-blue-900">DESCRIPTION</h2>
         <div className="flex justify-between text-sm">
-          <div>
-            <p className="text-gray-400">BILL TO</p>
-            <p>Ana Albuquerque</p>
-            <p>7568 Cameron Cir</p>
-            <p>Fort Myers, FL 33912</p>
-          </div>
+          {isClient(client) ? (
+            <div>
+              <p className="text-gray-400">CLIENT</p>
+              <p>{client!.clientName}</p>
+              <p className="max-w-[350px] break-words">
+                {client!.clientAddress}
+              </p>
+              {/* <p>Fort Myers, FL 33912</p> */}
+            </div>
+          ) : null}
           <div>
             <div className="flex justify-between gap-4">
               <p className="text-gray-400">DATE</p>
@@ -80,7 +128,7 @@ function InvoicePdf() {
         </div>
       </section>
 
-      <section className="flex flex-col gap-4 mt-4">
+      <section className="mt-4 flex flex-col gap-4">
         <hr />
         {categoriesIds.map((categoryId) => {
           const values = Object.values(itemsSelectedByCategory[categoryId]!);
@@ -110,7 +158,7 @@ function CategoryCard({
 
   return (
     <section>
-      <h3 className="font-bold capitalize text-2xl">{category.data?.name}:</h3>
+      <h3 className="text-2xl font-bold capitalize">{category.data?.name}:</h3>
       <ItemsList categoryItems={categoryItems} />
     </section>
   );
@@ -133,4 +181,8 @@ function ItemsList({
       ))}
     </ul>
   );
+}
+
+function isClient(client?: { clientName?: string; clientAddress?: string }) {
+  return client && (client.clientName?.length || client.clientAddress?.length);
 }

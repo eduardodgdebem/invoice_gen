@@ -8,8 +8,8 @@ import Link from "next/link";
 import ThemeControler from "./_components/theme-controle";
 
 export const metadata = {
-  title: "invoice gen",
-  description: "invoice generator",
+  title: "descriptive gen",
+  description: "descriptive generator",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
