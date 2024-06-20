@@ -109,16 +109,18 @@ function InvoicePdf({
       <section className="mt-8">
         <h2 className="text-xl text-blue-900">DESCRIPTION</h2>
         <div className="flex justify-between text-sm">
-          {isClient(client) ? (
+          {!!(
+            client &&
+            (client.clientName?.length || client.clientAddress?.length)
+          ) && (
             <div>
               <p className="text-gray-400">CLIENT</p>
-              <p>{client!.clientName}</p>
+              <p>{client.clientName}</p>
               <p className="max-w-[350px] break-words">
-                {client!.clientAddress}
+                {client.clientAddress}
               </p>
-              {/* <p>Fort Myers, FL 33912</p> */}
             </div>
-          ) : null}
+          )}
           <div>
             <div className="flex justify-between gap-4">
               <p className="text-gray-400">DATE</p>
@@ -181,8 +183,4 @@ function ItemsList({
       ))}
     </ul>
   );
-}
-
-function isClient(client?: { clientName?: string; clientAddress?: string }) {
-  return client && (client.clientName?.length || client.clientAddress?.length);
 }
