@@ -15,7 +15,6 @@ export default function InvoiceByCategoryID({
   params: { categoryId: string };
 }) {
   const categoryId = Number(params.categoryId);
-  // const category = api.invoice.getCategoryById.useQuery({ categoryId });
   const allItems = api.invoice.getItemsByCategoryId.useQuery({
     categoryId,
   });
