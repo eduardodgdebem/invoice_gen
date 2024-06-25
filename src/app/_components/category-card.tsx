@@ -1,11 +1,11 @@
-import { InvoiceDescriptionCategory } from "@prisma/client";
+import { ServiceCategories } from "@prisma/client";
 import { api } from "~/trpc/server";
 import { AddDescriptionItemButton } from "./add-description-item-button";
 
 export default async function CategoryCard({
   category,
 }: {
-  category: InvoiceDescriptionCategory;
+  category: ServiceCategories;
 }) {
   return (
     <div className="rounded-md bg-white p-4">
