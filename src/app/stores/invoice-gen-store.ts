@@ -77,7 +77,7 @@ export const invoiceGenUseStore = create<invoiceGenState>((set) => ({
       return {
         ...state,
         descriptiveId: descriptive.id,
-        descriptive: descriptive.json as any,
+        descriptive: descriptive.json as TDescriptive,
       };
     }),
 }));
