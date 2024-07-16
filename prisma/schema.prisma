@@ -45,6 +45,14 @@ model ServiceItems {
   @@index([description])
 }
 
+model Descriptive {
+  id            Int     @id @default(autoincrement())
+  title         String?
+  clientName    String?
+  clientAddress String?
+  json          Json    @default(dbgenerated("{}"))
+}
+
 // Necessary for Next auth
 model Account {
   id                       String  @id @default(cuid())

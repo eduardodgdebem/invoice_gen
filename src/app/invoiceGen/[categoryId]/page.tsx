@@ -4,7 +4,7 @@ import type { ServiceItems } from "@prisma/client";
 import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import { AddDescriptionItemButton } from "~/app/_components/add-description-item-button";
-import type { TItemsSelectedByCategory } from "~/app/stores/invoice-gen-store";
+import type { TDescriptive } from "~/app/stores/invoice-gen-store";
 import { invoiceGenUseStore } from "~/app/stores/invoice-gen-store";
 import { api } from "~/trpc/react";
 
@@ -18,7 +18,7 @@ export default function InvoiceByCategoryID({
     categoryId,
   });
   const itemsSelectedByCategory = invoiceGenUseStore(
-    (state) => state.itemsSelectedByCategory,
+    (state) => state.descriptive,
   );
 
   if (allItems.isFetching) return <p>Loding...</p>;
@@ -67,7 +67,7 @@ function ServiceItem({
 }: {
   item: ServiceItems;
   categoryId: number;
-  itemsSelectedByCategory: TItemsSelectedByCategory;
+  itemsSelectedByCategory: TDescriptive;
 }) {
   const [isAddingNote, setIsAddingNote] = useState(false);
   const [checked, setChecked] = useState(false);
@@ -155,7 +155,7 @@ function CheckButton({
   setChecked
 }: {
   item: ServiceItems;
-  itemsSelectedByCategory: TItemsSelectedByCategory;
+  itemsSelectedByCategory: TDescriptive;
   categoryId: number;
   checked: boolean;
   setChecked: Dispatch<SetStateAction<boolean>>

@@ -6,6 +6,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 import { getServerAuthSession } from "~/server/auth";
 import Link from "next/link";
 import ThemeControler from "./_components/theme-controle";
+import GoBack from "./_components/router-back-button";
 
 export const metadata = {
   title: "descriptive gen",
@@ -20,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
-      <body className="">
+      <body>
         <Nav />
         <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>
@@ -33,11 +34,14 @@ async function Nav() {
 
   return (
     <div className="flex items-center justify-between p-2">
-      <Link href="/" className="btn btn-primary">
-        Home
-      </Link>
+      <div className="flex gap-2">
+        <GoBack/>
+        <Link href="/" className="btn btn-primary">
+          Home
+        </Link>
+      </div>
       <div className="flex items-center justify-end gap-4">
-        <p className="text-center text-lg">
+        <p className="text-center text-lg max-sm:hidden">
           {session && <span>{session.user?.name}</span>}
         </p>
         <Link

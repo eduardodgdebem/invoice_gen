@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import { invoiceGenUseStore } from "~/app/stores/invoice-gen-store";
 import { api } from "~/trpc/react";
@@ -15,66 +15,81 @@ export default function InvoiceGenPdf() {
     },
   });
 
-  const [client, setClient] = useState({
-    clientName: "",
-    clientAddress: "",
-  });
+  const client = invoiceGenUseStore((state) => state.client);
+  const updateClient = invoiceGenUseStore((state) => state.updateClient);
+  const title = invoiceGenUseStore((state) => state.title);
+  const updateTitle = invoiceGenUseStore((state) => state.updateTitle);
 
   return (
-    <main className="p-2 print:hidden">
-      <section className="my-2 max-w-[400px] rounded-md border-[1px] p-2">
-        <div className="flex  flex-col">
-          <label htmlFor="client-name">Client Name</label>
-          <input
-            type="text"
-            className="input input-sm input-bordered"
-            id="client-name"
-            name="client-name"
-            value={client.clientName}
-            onChange={(e) =>
-              setClient((oldClient) => ({
-                ...oldClient,
-                clientName: e.target.value,
-              }))
-            }
-          />
+    <main className="flex flex-col gap-2 p-2 h-[calc(100vh-130px)] overflow-y-auto print:hidden ">
+      <section className="flex w-full gap-2 rounded-md border-[1px] p-2">
+        <div className="w-full">
+          <div className="flex flex-col">
+            <label htmlFor="title">Title</label>
+            <input
+              type="text"
+              className="input input-sm input-bordered"
+              id="title"
+              name="title"
+              value={title}
+              onChange={
+                (e) => updateTitle(e.target.value)
+                // setClient((oldClient) => ({
+                //   ...oldClient,
+                //   clientName: e.target.value,
+                // }))
+              }
+            />
+          </div>
         </div>
-        <div className="flex flex-col">
-          <label htmlFor="client-address">Client Address</label>
-          <input
-            type="text"
-            className="input input-sm input-bordered"
-            id="client-address"
-            name="client-adress"
-            value={client.clientAddress}
-            onChange={(e) =>
-              setClient((oldClient) => ({
-                ...oldClient,
-                clientAddress: e.target.value,
-              }))
-            }
-          />
+        <div className="w-full">
+          <div className="flex  flex-col">
+            <label htmlFor="client-name">Client Name</label>
+            <input
+              type="text"
+              className="input input-sm input-bordered"
+              id="client-name"
+              name="client-name"
+              value={client.name}
+              onChange={(e) => updateClient({ name: e.target.value })}
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="client-address">Client Address</label>
+            <input
+              type="text"
+              className="input input-sm input-bordered"
+              id="client-address"
+              name="client-adress"
+              value={client.address}
+              onChange={(e) => updateClient({ address: e.target.value })}
+            />
+          </div>
         </div>
       </section>
 
-      <button className="btn btn-primary" onClick={handlePrint}>
-        Print
-      </button>
+      <section ref={componentRef} className="rounded-md border-[1px]">
+        <InvoicePdf />
+      </section>
 
-      <div ref={componentRef}>
-        <InvoicePdf client={client} />
-      </div>
+      <section className="absolute bottom-0 left-0 w-full bg-[var(--fallback-b1,oklch(var(--b1)/1))]">
+        <hr />
+        <div className="m-2 flex gap-2">
+          <button className="btn btn-primary" onClick={handlePrint}>
+            Print
+          </button>
+          <SaveButton />
+        </div>
+      </section>
     </main>
   );
 }
 
-function InvoicePdf({
-  client,
-}: {
-  client?: { clientName: string; clientAddress: string };
-}) {
+function InvoicePdf() {
+  const client = invoiceGenUseStore((state) => state.client);
+
   const itemsSelectedByCategory = invoiceGenUseStore(
-    (state) => state.itemsSelectedByCategory,
+    (state) => state.descriptive,
   );
   const categoriesIds = Object.keys(itemsSelectedByCategory).map((s) =>
     Number(s),
@@ -84,6 +99,10 @@ function InvoicePdf({
     const today = new Date();
     return `${today.getMonth()}/${today.getDate()}/${today.getFullYear()}`;
   };
+
+  useEffect(() => {
+    console.log(itemsSelectedByCategory);
+  }, [itemsSelectedByCategory]);
 
   return (
     <div className="bg-white px-8 py-10 text-black print:font-roboto">
@@ -111,13 +130,13 @@ function InvoicePdf({
         <div className="flex justify-between text-sm">
           {!!(
             client &&
-            (client.clientName?.length || client.clientAddress?.length)
+            (client.name?.length || client.address?.length)
           ) && (
             <div>
               <p className="text-gray-400">CLIENT</p>
-              <p>{client.clientName}</p>
+              <p>{client.name}</p>
               <p className="max-w-[350px] break-words">
-                {client.clientAddress}
+                {client.address}
               </p>
             </div>
           )}
@@ -182,5 +201,66 @@ function ItemsList({
         </li>
       ))}
     </ul>
+  );
+}
+
+function SaveButton() {
+  const client = invoiceGenUseStore(state => state.client)
+  const title = invoiceGenUseStore((state) => state.title);
+  const descriptive = invoiceGenUseStore((state) => state.descriptive);
+  const descriptiveId = invoiceGenUseStore((state) => state.descriptiveId);
+  const updateDescriptiveId = invoiceGenUseStore(
+    (state) => state.updateDescriptiveId,
+  );
+  const saveDescriptive = api.descriptive.addDescriptive.useMutation();
+  const updateDescriptive = api.descriptive.updateDescriptive.useMutation();
+
+  const handleSave = () => {
+    if (descriptiveId) {
+      updateDescriptive.mutate(
+        {
+          clientName: client.name,
+          clientAddress: client.address,
+          title,
+          json: descriptive,
+          id: descriptiveId,
+        },
+        {
+          onSuccess: (data) => {
+            if (data.id) {
+              updateDescriptiveId(data.id);
+            }
+          },
+        },
+      );
+
+      return;
+    }
+
+    saveDescriptive.mutate(
+      {
+        clientName: client.name,
+        clientAddress: client.address,
+        title,
+        json: descriptive,
+      },
+      {
+        onSuccess: (data) => {
+          if (data.id) {
+            updateDescriptiveId(data.id);
+          }
+        },
+      },
+    );
+  };
+
+  return (
+    <button className="btn btn-primary" onClick={handleSave}>
+      {saveDescriptive.isPending ? (
+        <span className="loading loading-spinner"></span>
+      ) : (
+        "Save"
+      )}
+    </button>
   );
 }
