@@ -5,7 +5,7 @@ import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { useEffect, useState } from "react";
 import { AddDescriptionItemButton } from "~/app/_components/add-description-item-button";
 import type { TDescriptive } from "~/app/stores/invoice-gen-store";
-import { invoiceGenUseStore } from "~/app/stores/invoice-gen-store";
+import { descriptiveUseStore } from "~/app/stores/invoice-gen-store";
 import { api } from "~/trpc/react";
 
 export default function InvoiceByCategoryID({
@@ -17,15 +17,15 @@ export default function InvoiceByCategoryID({
   const allItems = api.invoice.getItemsByCategoryId.useQuery({
     categoryId,
   });
-  const itemsSelectedByCategory = invoiceGenUseStore(
+  const itemsSelectedByCategory = descriptiveUseStore(
     (state) => state.descriptive,
   );
 
-  if (allItems.isFetching) return <p>Loding...</p>;
+  if (allItems.isFetching) return <p className="w-full p-2">Loding...</p>;
 
   if (allItems.data?.length === 0)
     return (
-      <section className="p-2">
+      <section className="w-full p-2">
         <p>No items</p>
         <AddDescriptionItemButton
           categoryId={categoryId}
@@ -72,7 +72,7 @@ function ServiceItem({
   const [isAddingNote, setIsAddingNote] = useState(false);
   const [checked, setChecked] = useState(false);
 
-  const updateNote = invoiceGenUseStore((state) => state.updateNote);
+  const updateNote = descriptiveUseStore((state) => state.updateNote);
 
   const onSaveNote = (input: string) => {
     updateNote(categoryId, item.id, input);
@@ -160,8 +160,8 @@ function CheckButton({
   checked: boolean;
   setChecked: Dispatch<SetStateAction<boolean>>
 }) {
-  const updateItem = invoiceGenUseStore((state) => state.updateItem);
-  const removeItem = invoiceGenUseStore((state) => state.removeItem);
+  const updateItem = descriptiveUseStore((state) => state.updateItem);
+  const removeItem = descriptiveUseStore((state) => state.removeItem);
 
   useEffect(() => {
     const thisSelectedItems = itemsSelectedByCategory[categoryId];

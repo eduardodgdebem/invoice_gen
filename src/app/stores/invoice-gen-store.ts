@@ -24,9 +24,10 @@ export type invoiceGenState = {
   title: string;
   updateTitle: (title: string) => void;
   updateDescriptive: (descriptive: Descriptive) => void;
+  removeDescriptive: () => void;
 };
 
-export const invoiceGenUseStore = create<invoiceGenState>((set) => ({
+export const descriptiveUseStore = create<invoiceGenState>((set) => ({
   descriptiveId: null,
   updateDescriptiveId: (id) =>
     set((state) => ({ ...state, descriptiveId: id })),
@@ -72,7 +73,7 @@ export const invoiceGenUseStore = create<invoiceGenState>((set) => ({
       if (descriptive.clientName) state.client.name = descriptive.clientName;
       if (descriptive.title) state.title = descriptive.title;
 
-      console.log(descriptive.json)
+      console.log(descriptive.json);
 
       return {
         ...state,
@@ -80,4 +81,11 @@ export const invoiceGenUseStore = create<invoiceGenState>((set) => ({
         descriptive: descriptive.json as TDescriptive,
       };
     }),
+  removeDescriptive: () => set((state) => ({
+    ...state,
+    descriptiveId: null,
+    descriptive: {},
+    client: { name: "", address: "" },
+    title: "",
+  }))
 }));

@@ -2,20 +2,27 @@
 
 import { Descriptive } from "@prisma/client";
 import {
+  Column,
+  ColumnFiltersState,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { api } from "~/trpc/react";
-import { invoiceGenUseStore } from "../stores/invoice-gen-store";
+import { descriptiveUseStore } from "../stores/invoice-gen-store";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function DescriptivesList() {
   const descriptives = api.descriptive.getAllDescriptives.useQuery(undefined, {
     initialData: [],
   });
-  const updateDescriptive = invoiceGenUseStore(
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const updateDescriptive = descriptiveUseStore(
     (state) => state.updateDescriptive,
   );
   const route = useRouter();
@@ -25,16 +32,18 @@ export default function DescriptivesList() {
   const columns = [
     columnHelper.accessor("id", {
       cell: (info) => info.getValue(),
+      filterFn: 'equalsString'
     }),
     columnHelper.accessor("title", {
+      header: () => "Title",
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor("clientName", {
-      header: () => "Age",
+      header: () => "Client Name",
       cell: (info) => info.renderValue(),
     }),
     columnHelper.accessor("clientAddress", {
-      header: () => <span>Visits</span>,
+      header: () => "Client Address",
     }),
     columnHelper.display({
       id: "edit",
@@ -63,7 +72,14 @@ export default function DescriptivesList() {
   const table = useReactTable({
     data: descriptives.data,
     columns,
+    filterFns: {},
+    state: {
+      columnFilters,
+    },
+    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
 
   return (
@@ -73,13 +89,22 @@ export default function DescriptivesList() {
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                <th key={header.id} colSpan={header.colSpan}>
+                  {header.isPlaceholder ? null : (
+                    <>
+                      <div className="select-none p-1 text-[1rem]">
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                      </div>
+                      {header.column.getCanFilter() ? (
+                        <div>
+                          <Filter column={header.column} />
+                        </div>
+                      ) : null}
+                    </>
+                  )}
                 </th>
               ))}
             </tr>
@@ -98,5 +123,52 @@ export default function DescriptivesList() {
         </tbody>
       </table>
     </div>
+  );
+}
+
+function Filter({ column }: { column: Column<any, unknown> }) {
+  const columnFilterValue = column.getFilterValue();
+
+  return (
+    <DebouncedInput
+      className="input input-xs input-bordered"
+      onChange={(value) => column.setFilterValue(value)}
+      placeholder={`Search...`}
+      type="text"
+      value={(columnFilterValue ?? "") as string}
+    />
+  );
+}
+
+function DebouncedInput({
+  value: initialValue,
+  onChange,
+  debounce = 500,
+  ...props
+}: {
+  value: string | number;
+  onChange: (value: string | number) => void;
+  debounce?: number;
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
+  const [value, setValue] = useState(initialValue);
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      onChange(value);
+    }, debounce);
+
+    return () => clearTimeout(timeout);
+  }, [value]);
+
+  return (
+    <input
+      {...props}
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+    />
   );
 }

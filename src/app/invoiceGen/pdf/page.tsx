@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
-import { invoiceGenUseStore } from "~/app/stores/invoice-gen-store";
+import { descriptiveUseStore } from "~/app/stores/invoice-gen-store";
 import { api } from "~/trpc/react";
 import Image from "next/image";
 
@@ -15,13 +15,13 @@ export default function InvoiceGenPdf() {
     },
   });
 
-  const client = invoiceGenUseStore((state) => state.client);
-  const updateClient = invoiceGenUseStore((state) => state.updateClient);
-  const title = invoiceGenUseStore((state) => state.title);
-  const updateTitle = invoiceGenUseStore((state) => state.updateTitle);
+  const client = descriptiveUseStore((state) => state.client);
+  const updateClient = descriptiveUseStore((state) => state.updateClient);
+  const title = descriptiveUseStore((state) => state.title);
+  const updateTitle = descriptiveUseStore((state) => state.updateTitle);
 
   return (
-    <main className="flex flex-col gap-2 p-2 h-[calc(100vh-130px)] overflow-y-auto print:hidden ">
+    <main className="flex h-[calc(100vh-130px)] flex-col gap-2 overflow-y-auto p-2 print:hidden ">
       <section className="flex w-full gap-2 rounded-md border-[1px] p-2">
         <div className="w-full">
           <div className="flex flex-col">
@@ -74,7 +74,7 @@ export default function InvoiceGenPdf() {
 
       <section className="absolute bottom-0 left-0 w-full bg-[var(--fallback-b1,oklch(var(--b1)/1))]">
         <hr />
-        <div className="m-2 flex gap-2">
+        <div className="m-2 flex justify-end gap-2">
           <button className="btn btn-primary" onClick={handlePrint}>
             Print
           </button>
@@ -86,9 +86,9 @@ export default function InvoiceGenPdf() {
 }
 
 function InvoicePdf() {
-  const client = invoiceGenUseStore((state) => state.client);
+  const client = descriptiveUseStore((state) => state.client);
 
-  const itemsSelectedByCategory = invoiceGenUseStore(
+  const itemsSelectedByCategory = descriptiveUseStore(
     (state) => state.descriptive,
   );
   const categoriesIds = Object.keys(itemsSelectedByCategory).map((s) =>
@@ -128,16 +128,11 @@ function InvoicePdf() {
       <section className="mt-8">
         <h2 className="text-xl text-blue-900">DESCRIPTION</h2>
         <div className="flex justify-between text-sm">
-          {!!(
-            client &&
-            (client.name?.length || client.address?.length)
-          ) && (
+          {!!(client && (client.name?.length || client.address?.length)) && (
             <div>
               <p className="text-gray-400">CLIENT</p>
               <p>{client.name}</p>
-              <p className="max-w-[350px] break-words">
-                {client.address}
-              </p>
+              <p className="max-w-[350px] break-words">{client.address}</p>
             </div>
           )}
           <div>
@@ -205,11 +200,11 @@ function ItemsList({
 }
 
 function SaveButton() {
-  const client = invoiceGenUseStore(state => state.client)
-  const title = invoiceGenUseStore((state) => state.title);
-  const descriptive = invoiceGenUseStore((state) => state.descriptive);
-  const descriptiveId = invoiceGenUseStore((state) => state.descriptiveId);
-  const updateDescriptiveId = invoiceGenUseStore(
+  const client = descriptiveUseStore((state) => state.client);
+  const title = descriptiveUseStore((state) => state.title);
+  const descriptive = descriptiveUseStore((state) => state.descriptive);
+  const descriptiveId = descriptiveUseStore((state) => state.descriptiveId);
+  const updateDescriptiveId = descriptiveUseStore(
     (state) => state.updateDescriptiveId,
   );
   const saveDescriptive = api.descriptive.addDescriptive.useMutation();
