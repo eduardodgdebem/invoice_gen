@@ -126,7 +126,7 @@ export default function DescriptivesList() {
   );
 }
 
-function Filter({ column }: { column: Column<any, unknown> }) {
+function Filter({ column }: { column: Column<Descriptive, unknown> }) {
   const columnFilterValue = column.getFilterValue();
 
   return (
