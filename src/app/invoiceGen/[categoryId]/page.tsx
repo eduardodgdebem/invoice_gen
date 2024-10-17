@@ -204,7 +204,7 @@ function AddNoteForm({
   onSubmit: (input: string) => void;
   prevNote?: string;
 }) {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(prevNote ? prevNote : "");
 
   return (
     <form
